@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<head>
+  <title>Expert-AI RLHF</title>
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='scavenger.png') }}"
+  />
+  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
+
+  <script type="text/javascript">
+
+    let dids = {{dids}};
+
+    window.onload = function(){
+        // let obj = document.getElementById('submit');
+        // obj.onclick = function(){
+        //     let form = document.getElementById('form');
+        //     if(form.checkValidity()){
+        //         obj.classList.add('loading');
+        //     }
+        // }
+    }
+  </script>
+</head>
+
+<body>
+  <h2>Expert-AI RLHF</h2>
+
+  <form id='form' action="/" method="post">
+    <div class="hor">
+        <p>You are presented with several screens showing a <b>category</b> and a couple of <b>text paragraphs</b>.<br>
+        The paragraphs refer to the following question in a simulation environment:<br><br>
+        <i class="large"><b>Question:</b> "How will Iran contest the deployment of US forces during the defense of free movement through the Strait of Hormuz?"</i><br><br>
+        Choose the paragraph that provides a more <b>accurate reference</b> and is a <b>better match</b> for the specified category. In other words - the one that appeals to you more...
+    </p>
+    <hr/>
+    </div>
+    <br>
+    <!-- <input id='submit' type="submit" value="Submit" /> -->
+  </form>
+
+  <div class="result">
+      <table>
+      {% if data %}
+          {% for row in data %}
+          <tr id="section_{{row.get('did')}}">
+              <td><br><nobr>Category: <b>{{row.get('category')}}</b></nobr></td>
+              <td><p>{{row.get('option1')|safe}}</p></td>
+              <td><p>{{row.get('option2')|safe}}</p></td>
+          </tr>
+
+         {% endfor %}
+      {% endif %}
+
+          <tr>
+              <td><button>Back</button></td>
+              <td><button>Vote 1</button></td>
+              <td>
+                  <button>Vote 2</button>
+                  <button>Skip</button>
+                  <button>Submit and finish</button>
+              </td>
+          </tr>
+      </table>
+  </div>
+
+<script type="text/javascript">
+
+// ====== BARD     =======
+
+let results = [];
+let currentDid = 0;
+let buttons = document.querySelectorAll('button');
+let sections = document.querySelectorAll('[id^="section_"]');
+
+// Hide all sections.
+function hide_all_sections() {
+    for (const section of sections) {
+      // console.log(button.parentElement);
+      section.hidden = true;
+    }
+}
+hide_all_sections()
+
+if (currentDid < 1) {
+    buttons[0].hidden = true;
+}
+
+if (currentDid < dids.length - 1) {
+    buttons[4].hidden = true;
+}
+
+// Show the first section.
+document.getElementById('section_' + dids[currentDid]).hidden = false;
+
+// Handle the Vote 1 button click.
+buttons[1].addEventListener('click', () => {
+  results.push(0);
+  currentDid++;
+  showNextSection();
+});
+
+// Handle the Vote 2 button click.
+buttons[2].addEventListener('click', () => {
+  results.push(1);
+  currentDid++;
+  showNextSection();
+});
+
+// Handle the Skip button click.
+buttons[3].addEventListener('click', () => {
+  currentDid++;
+  showNextSection();
+});
+
+// Handle the Back button click.
+buttons[0].addEventListener('click', () => {
+  currentDid--;
+  showPreviousSection();
+});
+
+// Show the next section.
+function showNextSection() {
+  if (currentDid < dids.length - 1) {
+    hide_all_sections()
+    document.getElementById('section_' + dids[currentDid]).hidden = false;
+  } else {
+    // Hide the Skip button.
+    buttons[3].hidden = true;
+  }
+}
+
+// Show the previous section.
+function showPreviousSection() {
+  if (currentDid > 0) {
+    hide_all_sections()
+    document.getElementById('section_' + dids[currentDid]).hidden = false;
+  } else {
+    // Hide the Back button.
+    buttons[0].hidden = true;
+  }
+}
+
+// ====== END BARD =======
+</script>
+
+</body>

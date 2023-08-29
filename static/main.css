@@ -1,0 +1,127 @@
+@font-face {
+  font-family: "ColfaxAI";
+  src: url(https://cdn.openai.com/API/fonts/ColfaxAIRegular.woff2)
+      format("woff2"),
+    url(https://cdn.openai.com/API/fonts/ColfaxAIRegular.woff) format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "ColfaxAI";
+  src: url(https://cdn.openai.com/API/fonts/ColfaxAIBold.woff2) format("woff2"),
+    url(https://cdn.openai.com/API/fonts/ColfaxAIBold.woff) format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+body,
+input, select {
+  font-size: 16px;
+  line-height: 24px;
+  color: #353740;
+  font-family: "ColfaxAI", Helvetica, sans-serif;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+.icon {
+  width: 34px;
+}
+h3 {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: bold;
+  color: #202123;
+  margin: 16px 0 40px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  /* width: 320px; */
+}
+
+div.hor{
+    flex-direction:row;
+}
+
+label.mar{
+    width: 2em;
+}
+
+label{
+    padding-right: 1em;
+}
+
+input[type="text"], input[type="number"], select, input[type="password"] {
+  padding: 12px 16px;
+  border: 1px solid #10a37f;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+::placeholder {
+  color: #8e8ea0;
+  opacity: 1;
+}
+input[type="submit"] {
+  padding: 12px 0;
+  color: #fff;
+  background-color: #10a37f;
+  border: none;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 1em;
+}
+
+.loading {
+    background-image: url(https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fsmallenvelop.com%2Fwp-content%2Fuploads%2F2014%2F08%2FPreloader_21.gif&f=1&nofb=1&ipt=ce34a464d635993b41879d3c3cf83e399d4f551c46f2947b61eac5f64404a0f8&ipo=images);
+    background-repeat: no-repeat;
+    background-position: right;
+}
+
+.result {
+  /* font-weight: bold; */
+  /* margin-top: 3em; */
+  /* max-width: 59em; */
+}
+
+.result p {
+    max-width: 55em;
+    font-size: larger;
+}
+
+.result td {
+    vertical-align: top;
+    padding: 0 5em 0 0;
+}
+
+.result .float {
+    max-width: 30em;
+}
+
+.result .space {
+    min-width: 5em;
+}
+
+.result h2 {
+    /* text-transform: lowercase; */
+}
+.result h2:first-letter {
+    text-transform: uppercase;
+}
+
+input.fill {
+    width: -webkit-fill-available;
+}
+
+.fl {float: left;}
+.fr {float: right;}
+.cb {clear: both;}
+.capitalize {text-transform: capitalize;}
+.wide {min-width: 50em;}
+.wrong {color: red;}
+.small {font-size: small;}
+.large {font-size: larger;}

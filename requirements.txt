@@ -1,1 +1,10 @@
 Flask
+flask-cors
+werkzeug
+pandas
+psycopg2-binary
+SQLAlchemy
+python-dotenv
+numpy
+Jinja2 
+pyarrow
