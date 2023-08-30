@@ -53,6 +53,7 @@ def get_dids_from_cook() -> Union[None, list[int]]:
     dids_used = request.cookies.get('dids_used')
     return loads(dids_used) if dids_used else None
 
+
 if __name__ == '__main__':
     app.run(host=flask_server_config['host'], port=flask_server_config['port'], debug=flask_server_config['debug'],
             threaded=flask_server_config['threaded'])

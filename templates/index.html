@@ -6,16 +6,33 @@
     href="{{ url_for('static', filename='scavenger.png') }}"
   />
   <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap" rel="stylesheet">
   <style>
       #counterDiv {
         position: fixed;
         top: 0;
         right: 0;
-        background-color: silver;
+        background-color: #ebebeb;
         padding: 10px;
         /* border: 1px solid black; */
         z-index: 999;
+      }
+
+      #imgDiv {
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 5px;
+        /* border: 1px solid black; */
+        z-index: 997;
+      }
+      #imgDiv img {
+          width: 30%;
+          height: 30%;
+          object-fit: cover;
+          border-radius: 50%;
       }
     </style>
 
@@ -25,13 +42,6 @@
     let options_order = {{options_order}};  // 2d in array
 
     window.onload = function(){
-        // let obj = document.getElementById('submit');
-        // obj.onclick = function(){
-        //     let form = document.getElementById('form');
-        //     if(form.checkValidity()){
-        //         obj.classList.add('loading');
-        //     }
-        // }
     }
   </script>
 </head>
@@ -39,24 +49,30 @@
 <body>
   <!-- Counter element -->
   <div id="counterDiv"></div>
+  <div id='imgDiv'><img src="https://images.ctfassets.net/3viuren4us1n/YBv5GYe5AmQxE6fk4g1Sj/3dedfcb1cfd07ac24b76682e0fbdb7f6/rlhf.jpg?fm=webp&w=828"></div>
 
-  <h2>Expert-AI RLHF</h2>
+  <h2 class="artistic">Expert-AI RLHF</h2>
 
   <form id='form' action="/" method="post">
-    <div class="hor">
-        <p>You are presented with several screens showing a <b>category</b> and a couple of <b>text paragraphs</b>.<br>
-        The paragraphs refer to the following question in a simulation environment:<br><br>
+    <div class="hor" id='hor'>
+        <p>You are presented with several screens showing a <b>category</b> and a pair of <b>texts</b>.<br>
+        The texts refer to the following question in a simulation environment:<br><br>
         <i class="large"><b>Question:</b> "How will Iran contest the deployment of US forces during the defense of free movement through the Strait of Hormuz?"</i><br><br>
-        Choose the paragraph that provides a more <b>accurate reference</b> and is a <b>better match</b> for the specified category. In other words - the one that appeals to you more...
+        Choose the text that provides a more <b>accurate reference</b> and is a <b>better match</b> for the specified category. In other words - the one that appeals to you more...
     </p>
-    <hr/>
+    <!-- <hr/> -->
     </div>
     <br>
     <!-- <input id='submit' type="submit" value="Submit" /> -->
   </form>
 
-  <div class="result">
+  <div id='result' class="result">
       <table>
+          <tr>
+              <td class="g_yellow">&nbsp;</td>
+              <td class="g_red">&nbsp;</td>
+              <td class="g_blue">&nbsp;</td>
+          </tr>
       {% if data %}
           {% for row in data %}
           <tr id="section_{{row.get('did')}}">
@@ -71,8 +87,10 @@
           <tr>
               <td><button>Back</button></td>
               <td><button>Vote 1</button></td>
-              <td>
-                  <button>Vote 2</button>
+              <td><button class="g_blue">Vote 2</button></td>
+          </tr>
+          <tr>
+              <td colspan="3">
                   <button>Skip</button>
                   <button>Submit and finish</button>
               </td>
@@ -83,8 +101,6 @@
 <script src="{{ url_for('static', filename='utils.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
 
-// TODO - set buttons as named vars
-// TODO - define the Submit - set cook value with expanding array - JSON.stringify & JSON.parse
 // TODO - make the submit thing with sql in py
 
 // 10. local storage in Flask - then pull local-s on load and remove indices
@@ -96,35 +112,10 @@
 // 70. write results to db
 
 hide_all_sections()
+// Show the first section.
+showNextSection()
 updateCounter();
 
-if (currentDid < 1) {
-    buttons[0].hidden = true;
-}
-
-if (currentDid < dids.length - 1) {
-    buttons[4].hidden = true;
-}
-
-// Show the first section.
-document.getElementById('section_' + dids[currentDid]).hidden = false;
-
-// Handle the Vote 1 button click.
-buttons[1].addEventListener('click', () => {vote_click(0)} );
-
-// Handle the Vote 2 button click.
-buttons[2].addEventListener('click', () => {vote_click(1)} );
-
-// Handle the Skip button click.
-buttons[3].addEventListener('click', () => {vote_click(-1)});
-
-// Handle the Back button click.
-buttons[0].addEventListener('click', () => {
-  currentDid--;
-  showPreviousSection();
-});
-
-// ====== END BARD =======
 </script>
 
 </body>

@@ -14,7 +14,7 @@
   font-style: normal;
 }
 body,
-input, select {
+input, select, button {
   font-size: 16px;
   line-height: 24px;
   color: #353740;
@@ -35,6 +35,10 @@ h3 {
   font-weight: bold;
   color: #202123;
   margin: 16px 0 40px;
+}
+
+h2.artistic {
+    font-family: 'Montserrat', sans-serif;
 }
 
 form {
@@ -65,7 +69,7 @@ input[type="text"], input[type="number"], select, input[type="password"] {
   color: #8e8ea0;
   opacity: 1;
 }
-input[type="submit"] {
+input[type="submit"], button {
   padding: 12px 0;
   color: #fff;
   background-color: #10a37f;
@@ -74,6 +78,10 @@ input[type="submit"] {
   text-align: center;
   cursor: pointer;
   margin-bottom: 1em;
+}
+
+button {
+    width: 100%;
 }
 
 .loading {
@@ -90,7 +98,7 @@ input[type="submit"] {
 
 .result p {
     max-width: 55em;
-    font-size: larger;
+    font-size: large;
 }
 
 .result td {
@@ -124,4 +132,8 @@ input.fill {
 .wide {min-width: 50em;}
 .wrong {color: red;}
 .small {font-size: small;}
-.large {font-size: larger;}
+.large {font-size: large;}
+.g_blue {background-color: #4285F4}
+.g_red {background-color: #EA4335}
+.g_green {background-color: #34A853}
+.g_yellow {background-color: #FBBC05}

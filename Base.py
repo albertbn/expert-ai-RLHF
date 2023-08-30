@@ -7,6 +7,7 @@ DATASET_URL = 'https://expert-ai-files.ams3.digitaloceanspaces.com/expert-ai-tex
 COL_DID, COL_OPTION1, COL_OPTION2, COL_OPTION1_COPY = 'did', 'option1', 'option2', 'option1_copy'
 COL_OPTION_ORDER = 'option_order'
 HUMAN_BURNOUT_THRESHOLD = 10
+HACKED_SAMPLE_IDS = [1, 2, 23, 29]  # !
 
 
 class Base:
@@ -14,7 +15,7 @@ class Base:
     def __init__(self):
         super().__init__()
         self.df: pd.DataFrame = self.load_dataframe()
-        self.df_sample = self.get_df_sample()
+        # self.df_sample = self.get_df_sample()
 
     @staticmethod
     def load_dataframe() -> pd.DataFrame:
@@ -27,7 +28,49 @@ class Base:
         df[COL_DID] = df.index
         return df
 
-    def get_df_sample(self, n: int = HUMAN_BURNOUT_THRESHOLD) -> pd.DataFrame:
+    def get_hacked_sample(self, n: int = HUMAN_BURNOUT_THRESHOLD,
+                          exclude_indices: list[int] = None,
+                          hacked_indices: list[int] = HACKED_SAMPLE_IDS) -> pd.DataFrame:
+        df = self.df
+
+        # Handle default arguments for exclude_indices and hacked_indices
+        if exclude_indices is None:
+            exclude_indices = []
+        if hacked_indices is None:
+            hacked_indices = []
+
+        # Remove elements from hacked_indices that are also in exclude_indices
+        hacked_indices = [idx for idx in hacked_indices if idx not in exclude_indices]
+
+        # Exclude the rows with indices in exclude_indices when sampling
+        available_indices = df.index.difference(exclude_indices + hacked_indices)
+        # TODO - handle case when there is no more data to vote on
+        sampled_df = df.loc[available_indices].sample(n=n - len(hacked_indices)).copy()
+
+        # If hacked_indices is not empty, shuffle them and include them in the sampled_df
+        if hacked_indices:
+            random.shuffle(hacked_indices)
+            where = df[COL_DID].isin(hacked_indices)
+            hacked_df = df.loc[where]
+            sampled_df = pd.concat([hacked_df, sampled_df])
+
+        # Shuffle the sampled_df and reset index, keeping hacked_indices on top if any
+        sampled_df = sampled_df.sample(frac=1).reset_index(drop=True)
+        if hacked_indices:
+            where = sampled_df[COL_DID].isin(hacked_indices)
+            hacked_df = sampled_df[where].copy().reset_index(drop=True)
+            # sort by shuffled hacked indices
+            hacked_df['sort_order'] = hacked_df[COL_DID].apply(lambda x: hacked_indices.index(x))
+            hacked_df = hacked_df.sort_values('sort_order').drop(columns=['sort_order']).reset_index(drop=True)
+            non_hacked_df = sampled_df[~where]
+            sampled_df = pd.concat([hacked_df, non_hacked_df]).reset_index(drop=True)
+
+        return sampled_df
+
+    def get_df_sample(self, n: int = HUMAN_BURNOUT_THRESHOLD,
+                      exclude_indices: list[int] = None,
+                      hacked_indices: list[int] = HACKED_SAMPLE_IDS
+                      ) -> pd.DataFrame:
 
         """
         sample N records, according to OpenAI's recommendation to not burn out human evaluators
@@ -35,16 +78,10 @@ class Base:
         :return:
         """
 
-        df = self.df
-
-        # Sample N rows from a copy of the dataframe
-        sampled_df = df.sample(n=n).copy()
+        sampled_df = self.get_hacked_sample(n, exclude_indices, hacked_indices)
 
         # options order
         sampled_df[COL_OPTION_ORDER] = [[0, 1] for _ in range(len(sampled_df))]
-
-        # Shuffle the selection and reset index
-        sampled_df = sampled_df.sample(frac=1).reset_index(drop=True)
 
         # Select a random number K around the middle of N
         k = random.randint(n // 2 - 1, n // 2 + 1)
@@ -59,7 +96,9 @@ class Base:
         sampled_df.loc[where_filter, COL_OPTION1] = sampled_df.loc[where_filter, COL_OPTION2]
         sampled_df.loc[where_filter, COL_OPTION2] = sampled_df.loc[where_filter, COL_OPTION1_COPY]
         # reverse options order
-        sampled_df.loc[where_filter, COL_OPTION_ORDER] = [[1, 0] for _ in range(sum(where_filter))]
+        # sampled_df.loc[where_filter, COL_OPTION_ORDER] = [[1, 0] for _ in range(sum(where_filter))]
+        sampled_df.loc[where_filter, COL_OPTION_ORDER] = (
+            sampled_df.loc[where_filter, COL_OPTION_ORDER].apply(lambda x: [(~i + 2) for i in x]))
 
         # Drop the COL_OPTION1_COPY column as it's no longer needed
         sampled_df.drop(columns=[COL_OPTION1_COPY], inplace=True)
