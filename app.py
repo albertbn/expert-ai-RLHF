@@ -33,6 +33,7 @@ def index():
 
     return render_template('index.html', **params)
 
+
 @app.route('/vote', methods=['POST'])
 def vote():
     data = request.json
@@ -46,6 +47,7 @@ def vote():
     # conn.close()
 
     return jsonify({'status': 'success'})
+
 
 def get_dids_from_cook() -> Union[None, list[int]]:
     dids_used = request.cookies.get('dids_used')
