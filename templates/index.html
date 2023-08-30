@@ -7,9 +7,22 @@
   />
   <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
 
+  <style>
+      #counterDiv {
+        position: fixed;
+        top: 0;
+        right: 0;
+        background-color: silver;
+        padding: 10px;
+        /* border: 1px solid black; */
+        z-index: 999;
+      }
+    </style>
+
   <script type="text/javascript">
 
-    let dids = {{dids}};
+    let dids = {{dids}};  // in array
+    let options_order = {{options_order}};  // 2d in array
 
     window.onload = function(){
         // let obj = document.getElementById('submit');
@@ -24,6 +37,9 @@
 </head>
 
 <body>
+  <!-- Counter element -->
+  <div id="counterDiv"></div>
+
   <h2>Expert-AI RLHF</h2>
 
   <form id='form' action="/" method="post">
@@ -64,23 +80,23 @@
       </table>
   </div>
 
+<script src="{{ url_for('static', filename='utils.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
 
-// ====== BARD     =======
+// TODO - set buttons as named vars
+// TODO - define the Submit - set cook value with expanding array - JSON.stringify & JSON.parse
+// TODO - make the submit thing with sql in py
 
-let results = [];
-let currentDid = 0;
-let buttons = document.querySelectorAll('button');
-let sections = document.querySelectorAll('[id^="section_"]');
+// 10. local storage in Flask - then pull local-s on load and remove indices
+// 20. counter up right absolute position
+// 30. get answers from samle_df  = [0, 1] -swap for sampled
+// 40. vote buttons up and down - google colors
+// 50. skip - set -1
+// 60. on submit also add everything to local storage
+// 70. write results to db
 
-// Hide all sections.
-function hide_all_sections() {
-    for (const section of sections) {
-      // console.log(button.parentElement);
-      section.hidden = true;
-    }
-}
 hide_all_sections()
+updateCounter();
 
 if (currentDid < 1) {
     buttons[0].hidden = true;
@@ -94,52 +110,19 @@ if (currentDid < dids.length - 1) {
 document.getElementById('section_' + dids[currentDid]).hidden = false;
 
 // Handle the Vote 1 button click.
-buttons[1].addEventListener('click', () => {
-  results.push(0);
-  currentDid++;
-  showNextSection();
-});
+buttons[1].addEventListener('click', () => {vote_click(0)} );
 
 // Handle the Vote 2 button click.
-buttons[2].addEventListener('click', () => {
-  results.push(1);
-  currentDid++;
-  showNextSection();
-});
+buttons[2].addEventListener('click', () => {vote_click(1)} );
 
 // Handle the Skip button click.
-buttons[3].addEventListener('click', () => {
-  currentDid++;
-  showNextSection();
-});
+buttons[3].addEventListener('click', () => {vote_click(-1)});
 
 // Handle the Back button click.
 buttons[0].addEventListener('click', () => {
   currentDid--;
   showPreviousSection();
 });
-
-// Show the next section.
-function showNextSection() {
-  if (currentDid < dids.length - 1) {
-    hide_all_sections()
-    document.getElementById('section_' + dids[currentDid]).hidden = false;
-  } else {
-    // Hide the Skip button.
-    buttons[3].hidden = true;
-  }
-}
-
-// Show the previous section.
-function showPreviousSection() {
-  if (currentDid > 0) {
-    hide_all_sections()
-    document.getElementById('section_' + dids[currentDid]).hidden = false;
-  } else {
-    // Hide the Back button.
-    buttons[0].hidden = true;
-  }
-}
 
 // ====== END BARD =======
 </script>

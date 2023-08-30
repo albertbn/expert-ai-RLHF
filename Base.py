@@ -5,6 +5,7 @@ import traceback
 
 DATASET_URL = 'https://expert-ai-files.ams3.digitaloceanspaces.com/expert-ai-text-vs-graph-comparison2.csv'
 COL_DID, COL_OPTION1, COL_OPTION2, COL_OPTION1_COPY = 'did', 'option1', 'option2', 'option1_copy'
+COL_OPTION_ORDER = 'option_order'
 HUMAN_BURNOUT_THRESHOLD = 10
 
 
@@ -39,6 +40,9 @@ class Base:
         # Sample N rows from a copy of the dataframe
         sampled_df = df.sample(n=n).copy()
 
+        # options order
+        sampled_df[COL_OPTION_ORDER] = [[0, 1] for _ in range(len(sampled_df))]
+
         # Shuffle the selection and reset index
         sampled_df = sampled_df.sample(frac=1).reset_index(drop=True)
 
@@ -54,6 +58,8 @@ class Base:
         # Swap the contents of COL_OPTION1 and 'option2' without looping
         sampled_df.loc[where_filter, COL_OPTION1] = sampled_df.loc[where_filter, COL_OPTION2]
         sampled_df.loc[where_filter, COL_OPTION2] = sampled_df.loc[where_filter, COL_OPTION1_COPY]
+        # reverse options order
+        sampled_df.loc[where_filter, COL_OPTION_ORDER] = [[1, 0] for _ in range(sum(where_filter))]
 
         # Drop the COL_OPTION1_COPY column as it's no longer needed
         sampled_df.drop(columns=[COL_OPTION1_COPY], inplace=True)
