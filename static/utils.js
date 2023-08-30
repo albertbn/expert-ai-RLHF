@@ -1,5 +1,20 @@
 // ====== BARD     =======
 
+let punches = ["RLHF: Read, Learn, Hold, Forget. Wait, did I get that wrong?",
+"They said 'read thoroughly,' not 'read through it quickly!'",
+"Why did I get penalized for skimming? Even skim milk has substance!",
+"Reading the RLHF evaluation feels like scrolling through terms and conditions. Nobody really does it!",
+"I thought TL;DR was a valid response to RLHF evaluations!",
+"I didn't read the fine print, and now I'm in a fine mess.",
+"RLHF: So boring it makes watching paint dry seem like an action movie.",
+"I tried to skim the RLHF, but all I got was skimmed out of my bonus!",
+"I didn't read every line, now I'm serving time. Coincidence?",
+"RLHF: It's like a 'Where's Waldo?' of important information, and I'm terrible at finding Waldo."];
+
+punches = shuffleArray([...punches]);
+
+const overlay = document.getElementById("overlay");
+
 let results = [];
 let currentDid = 0;
 let buttons = document.querySelectorAll('button');
@@ -49,9 +64,14 @@ function vote_click(who = 0) {
   } else {
       results.push(who);  // skip
   }
+  // console.log('vote_click', currentDid,  dids.length - 1);
   if (currentDid < dids.length - 1) {
       currentDid++;
       showNextSection();
+  } else {
+      // Show submit button
+      button_submit.hidden = false;
+      button_vote1.hidden = button_vote2.hidden = true;
   }
 }
 
@@ -70,11 +90,9 @@ function showNextSection() {
   } else {
     // Hide the Skip button.
     button_skip.hidden = true;
-    // Show submit button
-    button_submit.hidden = false;
-    button_vote1.hidden = button_vote2.hidden = true;
   }
   updateCounter();
+  transition();
 }
 
 // Show the previous section.
@@ -90,24 +108,29 @@ function showPreviousSection() {
 }
 
 function submit_rlhf() {
-    // fetch('/vote', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(data)
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //     if (data.status === 'success') {
-    //     console.log(data);
-    //     }
-    // });
+    let data = {
+        'results': results,
+        'dids': dids
+    };
+    fetch('/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+        console.log(data);
+        }
+    });
+
     dids_used = get_dids_with_merge();
     console.log(dids_used);
     setCookie('dids_used', JSON.stringify(dids_used), 30);
     hide_all_sections();
     button_submit.hidden = true;
     const result = document.getElementById('result');
-    result.innerHTML = `<h2>Thank for your time completing the RLHF!</h2>`;
+    result.innerHTML = `<h2 class="artistic">Thank for your time completing the RLHF!</h2>`;
     const form = document.getElementById('hor');
     form.hidden = true;
 }
@@ -153,3 +176,47 @@ function setCookie(name, value, days) {
 }
 
 // setCookie('username', 'JohnDoe', 7);
+
+function shuffleArray(array) {
+  let currentIndex = array.length, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex !== 0) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+function showOverlay() {
+    let dots = '<div class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
+    overlay.querySelector('p').innerHTML = `<center><h1 class="white artistic">Loading next screen <br><br>${dots}</h1><br><h2 class="artistic white">${punches[currentDid-1]}</h2></center>`;
+    overlay.style.display = "flex";
+}
+
+function hideOverlay() {
+    overlay.style.display = "none";
+}
+
+function transition(){
+    if (currentDid < 1) return;
+    showOverlay();
+
+    setTimeout(() => {
+      hideOverlay();
+  }, 3000); // Show overlay for n seconds
+    // }, 100); // Show overlay for n seconds
+}
+
+// love ya chatGPT
+
+// Example usage:
+// const myArray = [1, 2, 3, 4, 5];
+// const shuffledArray = shuffleArray([...myArray]);  // Using spread operator to avoid modifying the original array

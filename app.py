@@ -1,9 +1,11 @@
 import os
+import pandas as pd
 from typing import Union
 from json import dumps, loads
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
-from Data import Data, COL_DID, COL_OPTION_ORDER
+from Data import Data, COL_DID, COL_OPTION_ORDER, COL_OPTION1, COL_OPTION2
+from utils.db import df_empty, df_to_sql
 
 from dotenv import load_dotenv
 
@@ -37,14 +39,25 @@ def index():
 @app.route('/vote', methods=['POST'])
 def vote():
     data = request.json
-    category = data['category']
-    paragraph = data['paragraph']
+    results = data['results']
+    dids = data['dids']
 
-    # conn = sqlite3.connect('votes.db')
-    # c = conn.cursor()
-    # c.execute("INSERT INTO votes (category, paragraph) VALUES (?, ?)", (category, paragraph))
-    # conn.commit()
-    # conn.close()
+    client_ip = request.remote_addr
+
+    # print(results, dids)
+    df = pd.DataFrame({COL_DID: dids,
+                       'category': [''] * len(results),
+                       'paragraph1': results,
+                       'paragraph2': results,
+                       'metadata': [{}] * len(results)
+                       })
+    df['paragraph1'] ^= 1
+    df['paragraph2'] &= 1
+    # Update the 'metadata.ip' field in the DataFrame with the client's IP address
+    df['metadata'] = df['metadata'].apply(lambda x: {**x, 'ip': client_ip})
+    df['metadata'] = df['metadata'].apply(lambda x: dumps(x))
+
+    df_to_sql(df)
 
     return jsonify({'status': 'success'})
 

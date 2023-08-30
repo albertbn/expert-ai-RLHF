@@ -37,7 +37,7 @@ h3 {
   margin: 16px 0 40px;
 }
 
-h2.artistic {
+h1.artistic, h2.artistic {
     font-family: 'Montserrat', sans-serif;
 }
 
@@ -84,11 +84,11 @@ button {
     width: 100%;
 }
 
-.loading {
+/* .loading {
     background-image: url(https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fsmallenvelop.com%2Fwp-content%2Fuploads%2F2014%2F08%2FPreloader_21.gif&f=1&nofb=1&ipt=ce34a464d635993b41879d3c3cf83e399d4f551c46f2947b61eac5f64404a0f8&ipo=images);
     background-repeat: no-repeat;
     background-position: right;
-}
+} */
 
 .result {
   /* font-weight: bold; */
@@ -137,3 +137,4 @@ input.fill {
 .g_red {background-color: #EA4335}
 .g_green {background-color: #34A853}
 .g_yellow {background-color: #FBBC05}
+.white {color: white;}

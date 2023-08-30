@@ -80,7 +80,7 @@ def execute(sql: str = 'update text2elastic set prompt=1'):
         disconnect(cur, conn)
 
 
-def df_to_sql(df: pd.DataFrame, sql_table: str = 'text2elastic', is_truncate: int = 0):
+def df_to_sql(df: pd.DataFrame, sql_table: str = 'expert_ai_rlhf', is_truncate: int = 0):
     """
     this generates an insert statement
     :param df:
@@ -99,6 +99,25 @@ def df_to_sql(df: pd.DataFrame, sql_table: str = 'text2elastic', is_truncate: in
         engine.execute(f'truncate table `{sql_table}`')
 
     df.to_sql(con=engine, name=sql_table, if_exists='append', index=False)
+
+
+def df_empty(sql_table='expert_ai_rlhf', ignore_keys: list[int] = ['id']):
+
+    conn, cur = None, None
+
+    try:
+        conn, cur = connect()
+        cur.execute(f"""SELECT COLUMN_NAME
+                           FROM INFORMATION_SCHEMA.COLUMNS
+                           WHERE TABLE_NAME='{sql_table}'""")
+
+        rows = cur.fetchall()
+
+        return pd.DataFrame(dict([row.get('COLUMN_NAME'), []] for row in rows
+                                 if not ignore_keys or row.get('COLUMN_NAME') not in ignore_keys))
+
+    finally:
+        disconnect(cur, conn)
 
 
 def df_from_sql(sql='SELECT * FROM text2elastic', index_column_arr: list = None) -> pd.DataFrame:
