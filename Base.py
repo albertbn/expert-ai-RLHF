@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import Union
 import random
 import traceback
 
@@ -30,7 +31,7 @@ class Base:
 
     def get_hacked_sample(self, n: int = HUMAN_BURNOUT_THRESHOLD,
                           exclude_indices: list[int] = None,
-                          hacked_indices: list[int] = HACKED_SAMPLE_IDS) -> pd.DataFrame:
+                          hacked_indices: list[int] = HACKED_SAMPLE_IDS) -> Union[None, pd.DataFrame]:
         df = self.df
 
         # Handle default arguments for exclude_indices and hacked_indices
@@ -45,6 +46,8 @@ class Base:
         # Exclude the rows with indices in exclude_indices when sampling
         available_indices = df.index.difference(exclude_indices + hacked_indices)
         # TODO - handle case when there is no more data to vote on
+        if not available_indices.shape[0]:
+            return None
         sampled_df = df.loc[available_indices].sample(n=n - len(hacked_indices)).copy()
 
         # If hacked_indices is not empty, shuffle them and include them in the sampled_df
@@ -70,7 +73,7 @@ class Base:
     def get_df_sample(self, n: int = HUMAN_BURNOUT_THRESHOLD,
                       exclude_indices: list[int] = None,
                       hacked_indices: list[int] = HACKED_SAMPLE_IDS
-                      ) -> pd.DataFrame:
+                      ) -> Union[None, pd.DataFrame]:
 
         """
         sample N records, according to OpenAI's recommendation to not burn out human evaluators
@@ -79,6 +82,8 @@ class Base:
         """
 
         sampled_df = self.get_hacked_sample(n, exclude_indices, hacked_indices)
+        if sampled_df is None:
+            return sampled_df
 
         # options order
         sampled_df[COL_OPTION_ORDER] = [[0, 1] for _ in range(len(sampled_df))]

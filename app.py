@@ -29,9 +29,12 @@ POST = 'POST'
 def index():
     with Data() as obj:
         params = obj.get_pairs(exclude_indices=get_dids_from_cook())
-        dids = [o.get(COL_DID) for o in params]
-        options_order = [o.get(COL_OPTION_ORDER) for o in params]
-        params = {'data': params, 'dids': dumps(dids), 'options_order': dumps(options_order)}
+        if not params:
+            params = {'data': [], 'dids': dumps([]), 'options_order': dumps([])}
+        else:
+            dids = [o.get(COL_DID) for o in params]
+            options_order = [o.get(COL_OPTION_ORDER) for o in params]
+            params = {'data': params, 'dids': dumps(dids), 'options_order': dumps(options_order)}
 
     return render_template('index.html', **params)
 

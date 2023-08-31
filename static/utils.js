@@ -35,6 +35,8 @@ if (currentDid < dids.length - 1) {
     button_submit.hidden = true;
 }
 
+if (dids.length < 1) merci();
+
 button_back.hidden = true;  // simplify for now - hide back
 button_skip.hidden = true;  // simplify for now - hide skip
 
@@ -84,7 +86,7 @@ function hide_all_sections() {
 
 // Show the next section.
 function showNextSection() {
-  if (currentDid < dids.length - 1) {
+  if (currentDid <= dids.length - 1) {
     hide_all_sections()
     document.getElementById('section_' + dids[currentDid]).hidden = false;
   } else {
@@ -127,6 +129,11 @@ function submit_rlhf() {
     dids_used = get_dids_with_merge();
     console.log(dids_used);
     setCookie('dids_used', JSON.stringify(dids_used), 30);
+
+    merci();
+}
+
+function merci(){
     hide_all_sections();
     button_submit.hidden = true;
     const result = document.getElementById('result');
@@ -211,7 +218,7 @@ function transition(){
 
     setTimeout(() => {
       hideOverlay();
-  }, 3000); // Show overlay for n seconds
+    }, 3000); // Show overlay for n seconds
     // }, 100); // Show overlay for n seconds
 }
 
