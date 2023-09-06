@@ -3,7 +3,7 @@ from Base import Base, COL_OPTION1, COL_OPTION2, COL_OPTION_ORDER, COL_DID  # do
 
 
 r_newline = re.compile('\n')
-r_outline = re.compile(r'^(Title|Summary|Capabilities|Strategy|Objectives|Evaluation)\b', re.M)
+r_outline = re.compile(r'^(Title|Summary|Capabilities|Strategy|Objectives|Evaluation|Argument|Evidence)\b', re.M)
 
 
 class Data(Base):

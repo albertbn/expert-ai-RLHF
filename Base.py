@@ -4,11 +4,13 @@ import random
 import traceback
 
 
-DATASET_URL = 'https://expert-ai-files.ams3.digitaloceanspaces.com/expert-ai-text-vs-graph-comparison2.csv'
+# DATASET_URL = 'https://expert-ai-files.ams3.digitaloceanspaces.com/expert-ai-text-vs-graph-comparison2.csv'
+DATASET_URL = 'https://expert-ai-files.ams3.digitaloceanspaces.com/expert-ai-text-vs-graph-comparison-russia-ukraine-energy.csv'
 COL_DID, COL_OPTION1, COL_OPTION2, COL_OPTION1_COPY = 'did', 'option1', 'option2', 'option1_copy'
 COL_OPTION_ORDER = 'option_order'
 HUMAN_BURNOUT_THRESHOLD = 10
-HACKED_SAMPLE_IDS = [1, 2, 23, 29]  # !
+# HACKED_SAMPLE_IDS = [1, 2, 23, 29]  # !
+HACKED_SAMPLE_IDS = []  # !
 
 
 class Base:
@@ -45,10 +47,11 @@ class Base:
 
         # Exclude the rows with indices in exclude_indices when sampling
         available_indices = df.index.difference(exclude_indices + hacked_indices)
-        # TODO - handle case when there is no more data to vote on
+        # DONE - handle case when there is no more data to vote on
         if not available_indices.shape[0]:
             return None
-        sampled_df = df.loc[available_indices].sample(n=n - len(hacked_indices)).copy()
+        sampled_df = df.loc[available_indices].sample(
+            n=min(available_indices.shape[0], n - len(hacked_indices))).copy()
 
         # If hacked_indices is not empty, shuffle them and include them in the sampled_df
         if hacked_indices:

@@ -4,12 +4,13 @@ from typing import Union
 from json import dumps, loads
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
-from Data import Data, COL_DID, COL_OPTION_ORDER, COL_OPTION1, COL_OPTION2
-from utils.db import df_empty, df_to_sql
+from Data import Data, COL_DID, COL_OPTION_ORDER
+from utils.db import df_to_sql
 
 from dotenv import load_dotenv
-
 load_dotenv()
+
+TOPIC = 'russia-ukraine-war-influence-energy'
 
 flask_server_config = {
 
@@ -52,7 +53,8 @@ def vote():
                        'category': [''] * len(results),
                        'paragraph1': results,
                        'paragraph2': results,
-                       'metadata': [{}] * len(results)
+                       'metadata': [{}] * len(results),
+                       'topic': [TOPIC] * len(results)
                        })
     df['paragraph1'] ^= 1
     df['paragraph2'] &= 1
