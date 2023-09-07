@@ -10,7 +10,10 @@ from utils.db import df_to_sql
 from dotenv import load_dotenv
 load_dotenv()
 
+# TOPIC = 'iran-united-states-hormuz'
 TOPIC = 'russia-ukraine-war-influence-energy'
+# COOKIE_NAME = 'dids_used'
+COOKIE_NAME = f"dids_used_{TOPIC.replace('-', '_')}"
 
 flask_server_config = {
 
@@ -31,11 +34,12 @@ def index():
     with Data() as obj:
         params = obj.get_pairs(exclude_indices=get_dids_from_cook())
         if not params:
-            params = {'data': [], 'dids': dumps([]), 'options_order': dumps([])}
+            params = {'data': [], 'dids': dumps([]), 'options_order': dumps([]), 'cookie_name': COOKIE_NAME}
         else:
             dids = [o.get(COL_DID) for o in params]
             options_order = [o.get(COL_OPTION_ORDER) for o in params]
-            params = {'data': params, 'dids': dumps(dids), 'options_order': dumps(options_order)}
+            params = {'data': params, 'dids': dumps(dids),
+                      'options_order': dumps(options_order), 'cookie_name': COOKIE_NAME}
 
     return render_template('index.html', **params)
 
@@ -68,7 +72,7 @@ def vote():
 
 
 def get_dids_from_cook() -> Union[None, list[int]]:
-    dids_used = request.cookies.get('dids_used')
+    dids_used = request.cookies.get(COOKIE_NAME)
     return loads(dids_used) if dids_used else None
 
 

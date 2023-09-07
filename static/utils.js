@@ -1,15 +1,26 @@
 // ====== BARD     =======
 
-let punches = ["RLHF: Read, Learn, Hold, Forget. Wait, did I get that wrong?",
-"They said 'read thoroughly,' not 'read through it quickly!'",
-"Why did I get penalized for skimming? Even skim milk has substance!",
-"Reading the RLHF evaluation feels like scrolling through terms and conditions. Nobody really does it!",
-"I thought TL;DR was a valid response to RLHF evaluations!",
-"I didn't read the fine print, and now I'm in a fine mess.",
-"RLHF: So boring it makes watching paint dry seem like an action movie.",
-"I tried to skim the RLHF, but all I got was skimmed out of my bonus!",
-"I didn't read every line, now I'm serving time. Coincidence?",
-"RLHF: It's like a 'Where's Waldo?' of important information, and I'm terrible at finding Waldo."];
+// let punches = ["RLHF: Read, Learn, Hold, Forget. Wait, did I get that wrong?",
+// "They said 'read thoroughly,' not 'read through it quickly!'",
+// "Why did I get penalized for skimming? Even skim milk has substance!",
+// "Reading the RLHF evaluation feels like scrolling through terms and conditions. Nobody really does it!",
+// "I thought TL;DR was a valid response to RLHF evaluations!",
+// "I didn't read the fine print, and now I'm in a fine mess.",
+// "RLHF: So boring it makes watching paint dry seem like an action movie.",
+// "I tried to skim the RLHF, but all I got was skimmed out of my bonus!",
+// "I didn't read every line, now I'm serving time. Coincidence?",
+// "RLHF: It's like a 'Where's Waldo?' of important information, and I'm terrible at finding Waldo."];
+
+let punches = ["I was going to compare these texts side-by-side, but then I saw a squirrel.",
+"Why did the text evaluator get fired? He was only into 'surface reading'!",
+"Comparing texts is so boring, even my imaginary friend fell asleep!",
+"I'd compare these texts, but my Instagram feed just updated. Priorities, you know?",
+"I tried to evaluate the texts, but I kept swiping left. Old habits die hard!",
+"I can totally compare these texts and watch funny videos at the same time. What do you mean, 'accuracy'?",
+"They caught me skimming through the text. Now, I'm sentenced to read 'War and Peace'—in detail!",
+"I told my boss that text comparison needs more GIFs and emojis. He didn't LOL.",
+"I'd be better at text comparison if it were a caffeinated activity.",
+"I'll get to comparing these texts right after I check my social media, have a snack, and maybe take a nap."]
 
 punches = shuffleArray([...punches]);
 
@@ -128,7 +139,7 @@ function submit_rlhf() {
 
     dids_used = get_dids_with_merge();
     console.log(dids_used);
-    setCookie('dids_used', JSON.stringify(dids_used), 30);
+    setCookie(cookie_name, JSON.stringify(dids_used), 30);
 
     merci();
 }
@@ -143,7 +154,7 @@ function merci(){
 }
 
 function get_dids_with_merge() {
-    let dids_used = getCookie('dids_used') || '[]';
+    let dids_used = getCookie(cookie_name) || '[]';
     dids_used = JSON.parse(dids_used);
     return dids_used.concat(dids);
 }

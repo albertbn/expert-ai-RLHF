@@ -13,6 +13,6 @@ CREATE TABLE IF NOT EXISTS expert_ai_rlhf (
 ALTER TABLE expert_ai_rlhf ADD COLUMN topic varchar NULL;
 
 update expert_ai_rlhf
-set topic = 'iran-russia-hormuz'
+set topic = 'iran-united-states-hormuz'
 where topic is null;
 
