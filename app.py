@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from Data import Data, COL_DID, COL_OPTION_ORDER
 from utils.db import df_to_sql
+from Ai import explain_image
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -74,6 +75,18 @@ def vote():
 def get_dids_from_cook() -> Union[None, list[int]]:
     dids_used = request.cookies.get(COOKIE_NAME)
     return loads(dids_used) if dids_used else None
+
+
+# region fad knocker
+@app.route('/fed_knocker', methods=['POST'])
+def fed_knocker():
+    data = request.json
+    print(f'fed_knocker data:: {data}')
+    base64_image = data['image']
+
+    explained_image = explain_image(base64_image)
+    return jsonify({'status': 'success', 'explained_image': explained_image})
+# endregion fad knocker
 
 
 if __name__ == '__main__':
