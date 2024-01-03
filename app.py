@@ -80,6 +80,7 @@ def get_dids_from_cook() -> Union[None, list[int]]:
 # region fad knocker
 @app.route('/fed_knocker', methods=['POST'])
 def fed_knocker():
+    # TODO - get here: full_html, image (already here), visual_banners_markup: list[str]
     data = request.json
     print(f'fed_knocker data:: {data}')
     base64_image = data['image']
