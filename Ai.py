@@ -1,4 +1,5 @@
 from utils.auth import OPENAI_API_KEY
+from utils.utils import parse_to_dict, parse_to_list
 import requests
 
 
@@ -48,15 +49,18 @@ def extract_ads_features(base64_encoded_image: str) -> str:
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
     ret = response.json().get('choices')[0].get('message').get('content')
-    return ret
+    ads_features = parse_to_dict(ret)
 
-def create_list_new_ads(ads_features: list[dict[str, str]], full_article_text: str) -> str:
+    return ads_features
+
+def create_list_new_ads(ads_features: list[dict[str, str]], full_article_text: str) -> list[str]:
     CREATE_LIST_NEW_ADS = f"""
-        Given the full article text, encapsulated in <full_article_text></full_article_text> tags below, and the list of ad features, enclosed in <ads_features></ads_features tags below, 
-        create a list of new ads, combining the article text and subject and the target idea of each ad. 
-        If the ad has `close_content_text`, prefer it, to enhance the effect of an even stronger contextual ad. Relate the new ad copy text as much as possible to the page content. 
+        Given the full article text, encapsulated in <full_article_text></full_article_text> tags below, and the list of ad features, enclosed in <ads_features></ads_features> tags below, 
+        create a list of new ads, combining the article text and each of the ads features, in the provided list in <ads_features></ads_features>. You should use the 'text' field in each
+        entry of the ads features. Relate the new ad copy text as much as possible to the page content. 
         If it's funny - make a joke, if it's for hackers - come up with a hacky copy, etc... Last but not least, you are provided with a list of markup elements recorded at the time 
-        the screenshot was taken. Use the width and height of the detected images to build a relation of which ad is related to which detected markup.\n\n
+        the screenshot was taken. Use the width and height of the detected images to build a relation of which ad is related to which detected markup.
+        Your answer should be given in a list format, containing each new ad text for each ad feature, in order. \n\n
         <full_article_text>{full_article_text}</full_article_text>
         <ads_features>{ads_features}</ads_features>
         """
@@ -67,7 +71,7 @@ def create_list_new_ads(ads_features: list[dict[str, str]], full_article_text: s
     }
 
     payload = {
-        "model": "gpt-4",
+        "model": "gpt-4-turbo",
         "messages": [
             {
                 "role": "user",
@@ -84,4 +88,6 @@ def create_list_new_ads(ads_features: list[dict[str, str]], full_article_text: s
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
     ret = response.json().get('choices')[0].get('message').get('content')
-    return ret
+
+    new_ads_list = parse_to_list(ret)
+    return new_ads_list
