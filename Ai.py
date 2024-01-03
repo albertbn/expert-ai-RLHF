@@ -3,22 +3,21 @@ import requests
 
 
 def extract_ads_features(base64_encoded_image: str) -> str:
-    EXPLAIN_IMAGE_PROMPT = """
-        You are provided with a screenshot of a website. The screenshot may contain a main content part and ads. Detect and explain the ads as follows:
-        ```javascript
-        [{
-            height: the height of the ad in pixels,
-            width: the width of the ad in pixels,
-            text: the text of the ad,
-            text_color: the color of the text,
-            background_color: the background color of the ad,
-            emotions: [a list of emotions the ad conveys] (TODO specify),
-            target: the target of the ad (TODO specify that),
-            close_content_text: if there is close text from the main content to any of the ads - write it here
-            ...      
-        }, {...}]
-        ```
-    """
+    EXPLAIN_IMAGE_PROMPT = ("You are provided with a screenshot of a website. The screenshot may contain a main content part and ads. Detect and explain the ads as follows: "
+        "```javascript "
+        "[{ "
+        "    height: the height of the ad in pixels, "
+        "    width: the width of the ad in pixels, "
+        "    text: the text of the ad, "
+            # text_color: the color of the text,
+            # background_color: the background color of the ad,
+            # emotions: [a list of emotions the ad conveys] (TODO specify),
+        "    target: the target of the ad (TODO specify that), "
+            # close_content_text: if there is close text from the main content to any of the ads - write it here
+        "    ..."    
+        "}, {...}]"
+        "``` "
+    )
 
     headers = {
         "Content-Type": "application/json",
@@ -51,7 +50,7 @@ def extract_ads_features(base64_encoded_image: str) -> str:
     ret = response.json().get('choices')[0].get('message').get('content')
     return ret
 
-def create_list_new_ads(ads_features: dict[str, str], full_article_text: str) -> str:
+def create_list_new_ads(ads_features: list[dict[str, str]], full_article_text: str) -> str:
     CREATE_LIST_NEW_ADS = f"""
         Given the full article text, encapsulated in <full_article_text></full_article_text> tags below, and the list of ad features, enclosed in <ads_features></ads_features tags below, 
         create a list of new ads, combining the article text and subject and the target idea of each ad. 
@@ -68,7 +67,7 @@ def create_list_new_ads(ads_features: dict[str, str], full_article_text: str) ->
     }
 
     payload = {
-        "model": "gpt-4-vision-preview",
+        "model": "gpt-4",
         "messages": [
             {
                 "role": "user",

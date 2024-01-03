@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-from bs4 import BeautifulSoup
 from typing import Union
 from json import dumps, loads
 from flask import Flask, render_template, request, jsonify
@@ -81,19 +80,14 @@ def get_dids_from_cook() -> Union[None, list[int]]:
 # region fad knocker
 @app.route('/fad_knocker', methods=['POST'])
 def fad_knocker():
-    # TODO - get here: full_html, image (already here), visual_banners_markup: list[str]
+    # TODO - get here: html, image (already here), visual_banners_markup: list[str]
     data = request.json
-    print(f'fed_knocker data:: {data}')
+    print(f'fad_knocker data:: {data}')
     base64_image = data['image']
 
-    full_html = data['full_html']
-    soup = BeautifulSoup(full_html, features="html.parser")
+    html = data['html']
 
-    # kill all script and style elements
-    for script in soup(["script", "style"]):
-        script.extract()
-
-    full_article_text = soup.get_text()
+    # TODO: add newspaper full html extraction
 
     ads_features = extract_ads_features(base64_image)
     new_ads_list = create_list_new_ads(ads_features, full_article_text)
