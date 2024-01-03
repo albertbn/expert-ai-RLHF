@@ -1,12 +1,13 @@
 import os
 import pandas as pd
+from bs4 import BeautifulSoup
 from typing import Union
 from json import dumps, loads
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from Data import Data, COL_DID, COL_OPTION_ORDER
 from utils.db import df_to_sql
-from Ai import explain_image
+from Ai import extract_ads_features, create_list_new_ads
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -85,8 +86,18 @@ def fad_knocker():
     print(f'fed_knocker data:: {data}')
     base64_image = data['image']
 
-    explained_image = explain_image(base64_image)
-    return jsonify({'status': 'success', 'explained_image': explained_image})
+    full_html = data['full_html']
+    soup = BeautifulSoup(full_html, features="html.parser")
+
+    # kill all script and style elements
+    for script in soup(["script", "style"]):
+        script.extract()
+
+    full_article_text = soup.get_text()
+
+    ads_features = extract_ads_features(base64_image)
+    new_ads_list = create_list_new_ads(ads_features, full_article_text)
+    return jsonify({'status': 'success', 'ads_features': ads_features, 'new_ads_list': new_ads_list})
 # endregion fad knocker
 
 

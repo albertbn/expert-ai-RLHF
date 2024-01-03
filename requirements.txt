@@ -1,3 +1,4 @@
+BeautifulSoup
 Flask
 flask-cors
 werkzeug
