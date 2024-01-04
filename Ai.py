@@ -53,8 +53,10 @@ def create_list_new_ads(ads_features: list[dict[str, str]], full_article_text: s
     create_list_new_ads = f"""
     You are provided with a full article text and a list of ads. The ads contain a text field and a target field. 
     Rewrite the ad copy, so that it's contextualized and related to the article context. 
-    For example: If the article is funny and has jokes, make the ad copy a joke, or if it's hacker content, make the ad talk to hackers. 
-    Keep the new ad copy short, of about 5-10 words. 
+    For example: If the article is funny and has jokes, make the ad copy a joke - write an actual joke! 
+    Or if it's hacker content, make the ad talk to hackers. 
+    Keep the new ad copy concise, of about 10-12 words, but most importantly amaze people by smartly relating the ad to the article. 
+    Include a couple of emoticons to make it look even cooler. 
     Output as a JSON list ['ad copy 1', 'ad copy 2', ...]
     <full_article_text>{full_article_text}</full_article_text>
     <ads_features>{ads_features}</ads_features>
