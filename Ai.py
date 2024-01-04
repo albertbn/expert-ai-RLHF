@@ -3,22 +3,16 @@ from utils.utils import parse_to_dict, parse_to_list
 import requests
 
 
-def extract_ads_features(base64_encoded_image: str) -> list[dict[str, str]]:
-    EXPLAIN_IMAGE_PROMPT = ("You are provided with a screenshot of a website. The screenshot may contain a main content part and ads. Detect and explain the ads as follows: "
-        "```javascript "
-        "[{ "
-        "    height: the height of the ad in pixels, "
-        "    width: the width of the ad in pixels, "
-        "    text: the text of the ad, "
-            # text_color: the color of the text,
-            # background_color: the background color of the ad,
-            # emotions: [a list of emotions the ad conveys] (TODO specify),
-        "    target: the target of the ad (TODO specify that), "
-            # close_content_text: if there is close text from the main content to any of the ads - write it here
-        "    ..."    
-        "}, {...}]"
-        "``` "
-    )
+def extract_ads_features(base64_encoded_image: str) -> str:
+    EXPLAIN_IMAGE_PROMPT = """You are provided with a screenshot of a website. The screenshot may contain a main content part and ads. Detect and explain the ads as follows: 
+        [{
+            height: the height of the ad in pixels,
+            width: the width of the ad in pixels,
+            text: the text of the ad,
+            target: the target of the ad,
+            ...
+        }, {...}]
+        Your answer should only contain the list of JSON objects, and nothing more. """
 
     headers = {
         "Content-Type": "application/json",
@@ -71,7 +65,7 @@ def create_list_new_ads(ads_features: list[dict[str, str]], full_article_text: s
     }
 
     payload = {
-        "model": "gpt-4-turbo",
+        "model": "gpt-4",
         "messages": [
             {
                 "role": "user",
@@ -87,6 +81,7 @@ def create_list_new_ads(ads_features: list[dict[str, str]], full_article_text: s
     }
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+    print(response)
     ret = response.json().get('choices')[0].get('message').get('content')
 
     new_ads_list = parse_to_list(ret)

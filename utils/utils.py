@@ -4,11 +4,16 @@ from typing import Optional
 
 
 def parse_to_dict(input_string: str) -> Optional[list[dict[str, str]]]:
-    cleaned_str = input_string.strip('()[]"')
+    print(f"input_string = {input_string}")
+    cleaned_str = input_string.strip('()[]"`')
+    cleaned_str = cleaned_str.replace('javascript', '')
     cleaned_str = cleaned_str.replace(':', '=').replace(',', '')
     cleaned_str = '\n'.join(line for line in cleaned_str.split('\n') if not line.strip().startswith('#'))
 
     cleaned_str = re.sub(r'(\b\w+)\s*=', r"'\1':", cleaned_str)
+
+    print(f"cleaned_str = {cleaned_str}")
+
 
     try:
         data = ast.literal_eval(f'[{cleaned_str}]')
