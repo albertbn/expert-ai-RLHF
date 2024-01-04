@@ -3,7 +3,7 @@ from utils.utils import parse_to_dict, parse_to_list
 import requests
 
 
-def extract_ads_features(base64_encoded_image: str) -> str:
+def extract_ads_features(base64_encoded_image: str) -> list[dict[str, str]]:
     EXPLAIN_IMAGE_PROMPT = ("You are provided with a screenshot of a website. The screenshot may contain a main content part and ads. Detect and explain the ads as follows: "
         "```javascript "
         "[{ "

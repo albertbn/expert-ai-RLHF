@@ -17,6 +17,7 @@ def parse_to_dict(input_string: str) -> Optional[list[dict[str, str]]]:
         print(f"Error parsing string: {e}")
         return None
 
+
 def parse_to_list(input_string: str) -> Optional[list[str]]:
     cleaned_str = input_string.strip('()[]"')
     cleaned_str = cleaned_str.replace(':', '=').replace(',', '')
