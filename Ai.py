@@ -91,8 +91,10 @@ def create_list_new_ads(ads_features: list[dict[str, str]], full_article_text: s
     return new_ads_list
 
 
-def hack_add(ad_subject: str = 'alternative recyclable energy source', ad_goal: str = 'use the force as in Star Wars',
-             ad_style:str = 'Funny standup punches, mention Vader', full_article_text: str = '') -> list[str]:
+def hack_add(ad_subject: str = 'Beet Root Gummies',
+             ad_goal: str = 'Start your day right with naturally occurring antioxidants',
+             ad_style:str = 'Funny standup punches, skeptic and abstract jokes',
+             full_article_text: str = '') -> list[str]:
     ad_prompt = f"""
     You are provided with several ad properties and a full article text.  
     Write an ad copy, so that it's contextualized and related to the article context.
