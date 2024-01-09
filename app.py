@@ -6,7 +6,8 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from Data import Data, COL_DID, COL_OPTION_ORDER
 from utils.db import df_to_sql
-from Ai import explain_image
+from Ai import extract_ads_features, create_list_new_ads
+from newspaper import Article
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -81,9 +82,29 @@ def get_dids_from_cook() -> Union[None, list[int]]:
 @app.route('/fad_knocker', methods=['POST'])
 def fad_knocker():
     data = request.json
-    html = data['html']
+    # print(f'fad_knocker data:: {data}')
     print(html)
-    return jsonify({'status': 'success'})
+    html = data['html']
+    article = Article('')
+    article.set_html(html)
+    article.parse()
+
+    full_article_text = article.text
+
+    print(f"full_article_text = {full_article_text}")
+
+    ads_features: list[dict[str, str]] = extract_ads_features(base64_image)
+    print(f"ads_features = {ads_features}")
+
+    new_ads_list: list[str] = create_list_new_ads(ads_features, full_article_text)
+    new_ads_features = []
+
+    for ad_feature, new_ad_text in zip(ads_features, new_ads_list):
+        ad_feature['new_text'] = new_ad_text
+        new_ads_features.append(ad_feature)
+    
+    print(f"new_ads_features = {new_ads_features}")
+    return jsonify({'status': 'success', 'new_ads_features': new_ads_features})
 # endregion fad knocker
 
 

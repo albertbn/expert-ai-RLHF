@@ -5,6 +5,7 @@ pandas
 psycopg2-binary
 SQLAlchemy
 python-dotenv
+newspaper3k
 numpy
 Jinja2 
 pyarrow
