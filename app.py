@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from Data import Data, COL_DID, COL_OPTION_ORDER
 from utils.db import df_to_sql
-from Ai import extract_ads_features, create_list_new_ads
+from Ai import extract_ads_features, create_list_new_ads, hack_add
 from newspaper import Article
 
 from dotenv import load_dotenv
@@ -82,9 +82,35 @@ def get_dids_from_cook() -> Union[None, list[int]]:
 @app.route('/fad_knocker', methods=['POST'])
 def fad_knocker():
     data = request.json
-    # print(f'fad_knocker data:: {data}')
-    print(html)
+
     html = data['html']
+    # print(html)
+
+    article = Article('')
+    article.set_html(html)
+    article.parse()
+
+    full_article_text = article.text
+
+    ad = hack_add(full_article_text=full_article_text)
+
+    # print(f"full_article_text = {full_article_text}")
+
+    return jsonify({'status': 'success', 'ad': ad})
+
+
+@app.route('/fad_knocker0', methods=['POST'])
+def fad_knocker0():
+    """
+    this is the version for the browser extension
+    :return:
+    """
+    data = request.json
+    # print(f'fad_knocker data:: {data}')
+    html = data['html']
+    base64_image = data['image']
+
+    print(html)
     article = Article('')
     article.set_html(html)
     article.parse()

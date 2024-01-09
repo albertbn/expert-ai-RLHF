@@ -89,3 +89,46 @@ def create_list_new_ads(ads_features: list[dict[str, str]], full_article_text: s
 
     new_ads_list = parse_str(ret)
     return new_ads_list
+
+
+def hack_add(ad_subject: str = 'alternative recyclable energy source', ad_goal: str = 'use the force as in Star Wars',
+             ad_style:str = 'Funny standup punches, mention Vader', full_article_text: str = '') -> list[str]:
+    ad_prompt = f"""
+    You are provided with several ad properties and a full article text.  
+    Write an ad copy, so that it's contextualized and related to the article context.
+    Keep the new ad copy concise, of about 10-12 words, but most importantly amaze people by smartly relating the ad to the article. 
+    Include a couple of emoticons to make it look even cooler. 
+    Output just the plain ad copy without any explanatory text whatsoever!
+    
+    ad_subject: {ad_subject}
+    ad_goal: {ad_goal}
+    ad_style: {ad_style}
+    full_article_text: {full_article_text}
+"""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {OPENAI_API_KEY}"
+    }
+
+    payload = {
+        "model": "gpt-4-1106-preview",
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": ad_prompt
+                    }
+                ]
+            }
+        ],
+        "max_tokens": 2056
+    }
+
+    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+    # print(response)
+    ret = response.json().get('choices')[0].get('message').get('content')
+
+    return ret

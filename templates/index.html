@@ -152,7 +152,7 @@
               <td class="g_blue">&nbsp;</td>
           </tr>
       {% if data %}
-          {% for row in data %}
+          {% for row in data[:1] %}
           <tr id="section_{{row.get('did')}}">
               <td>
                   <br><nobr>Category: <b>{{row.get('category')}}</b></nobr>
