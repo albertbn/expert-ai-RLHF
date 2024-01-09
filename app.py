@@ -78,14 +78,12 @@ def get_dids_from_cook() -> Union[None, list[int]]:
 
 
 # region fad knocker
-@app.route('/fed_knocker', methods=['POST'])
-def fed_knocker():
+@app.route('/fad_knocker', methods=['POST'])
+def fad_knocker():
     data = request.json
-    print(f'fed_knocker data:: {data}')
-    base64_image = data['image']
-
-    explained_image = explain_image(base64_image)
-    return jsonify({'status': 'success', 'explained_image': explained_image})
+    html = data['html']
+    print(html)
+    return jsonify({'status': 'success'})
 # endregion fad knocker
 
 
